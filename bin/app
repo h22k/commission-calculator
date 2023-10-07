@@ -1,11 +1,13 @@
 #!/usr/bin/env php
+<?php
+
+define('ROOT_PATH', dirname(__FILE__) . '/../');
+
 /**
  * @var $container \DI\Container
  */
-$container = require_once __DIR__ . '/bootstrap/app.php';
+$container = require_once __DIR__ . '/../bootstrap/app.php';
 
 $app = $container->get(\H22k\CommissionCalculator\App::class);
 
 $app->run();
-
-
