@@ -21,19 +21,19 @@ abstract class BaseRateClient extends BaseClient implements RateClient
         parent::__construct($client, $requestOption);
     }
 
-    abstract protected function getRate(ResponseInterface $response): float;
+    abstract protected function getRate(ResponseInterface $response, string $currency): float;
 
     public function getBaseValue(Transaction $transaction): float
     {
         if ($this->isBaseCurrency($transaction->getCurrency())) {
-            return 1;
+            return $transaction->getAmount();
         }
 
         try {
             $response = $this->sendRequest($transaction);
-            $rate = $this->getRate($response);
+            $rate = $this->getRate($response, $transaction->getCurrency());
         } catch (Exception $exception) {
-            throw;
+            throw $exception;
         }
 
         return $transaction->getAmount() / $rate;

@@ -39,10 +39,10 @@ class ExchangeRatesClient extends BaseRateClient
         );
     }
 
-    protected function getRate(ResponseInterface $response): float
+    protected function getRate(ResponseInterface $response, string $currency): float
     {
-        $body = json_decode($response->getBody()->getContents());
+        $body = json_decode($response->getBody()->getContents(), true);
 
-        return reset($body->rates);
+        return $body['rates'][$currency];
     }
 }

@@ -24,11 +24,11 @@ class TxtReadStrategy implements ReadStrategy
             throw new BadExtensionException(sprintf('%s is not a .txt file!', $fileName));
         }
 
-        if (!file_exists($fileName)) {
+        if (!file_exists(ROOT_PATH . $fileName)) {
             throw new FileNotFoundException($fileName);
         }
 
-        $this->file = fopen($fileName, 'r');
+        $this->file = fopen(ROOT_PATH . $fileName, 'r');
     }
 
     public function __destruct()
@@ -59,7 +59,7 @@ class TxtReadStrategy implements ReadStrategy
 
         if (!$this->isTransactionAcceptable($transactionAsJson)) {
             throw new BadTransactionException(
-                'There is something wrong with this transaction: %s', json_encode($transactionAsJson ?? [])
+                sprintf('There is something wrong with this transaction: %s', json_encode($transactionAsJson ?? []))
             );
         }
 
@@ -73,7 +73,7 @@ class TxtReadStrategy implements ReadStrategy
     private function isTransactionAcceptable(object $transactionAsJson): bool
     {
         return $transactionAsJson
-            && ($transactionAsJson->amount && is_float($transactionAsJson->amount))
+            && ($transactionAsJson->amount && is_float((float)$transactionAsJson->amount))
             && ($transactionAsJson->currency && is_string($transactionAsJson->currency))
             && ($transactionAsJson->bin && is_string($transactionAsJson->bin));
     }

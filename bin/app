@@ -1,0 +1,11 @@
+#!/usr/bin/env php
+/**
+ * @var $container \DI\Container
+ */
+$container = require_once __DIR__ . '/bootstrap/app.php';
+
+$app = $container->get(\H22k\CommissionCalculator\App::class);
+
+$app->run();
+
+
