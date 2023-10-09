@@ -2,17 +2,17 @@
 
 namespace H22k\CommissionCalculator;
 
-use GuzzleHttp\Client;
-use H22k\CommissionCalculator\Transaction\Transaction;
+use GuzzleHttp\ClientInterface;
+use H22k\CommissionCalculator\Transaction\Contracts\TransactionInterface;
 use Psr\Http\Message\ResponseInterface;
 
 abstract class BaseClient
 {
     public function __construct(
-        protected Client $client,
-        protected RequestOption $requestOption
+        protected ClientInterface $client,
+        protected RequestOptionInterface $requestOption
     ) {
     }
 
-    abstract protected function sendRequest(Transaction $transaction): ResponseInterface;
+    abstract protected function sendRequest(TransactionInterface $transaction): ResponseInterface;
 }

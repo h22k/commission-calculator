@@ -2,9 +2,9 @@
 
 namespace H22k\CommissionCalculator\Bin\Contracts;
 
-use H22k\CommissionCalculator\Transaction\Transaction;
+use H22k\CommissionCalculator\Transaction\Contracts\TransactionInterface;
 
 interface BinClient
 {
-    public function isEuropean(Transaction $transaction): bool;
+    public function isEuropean(TransactionInterface $transaction): bool;
 }

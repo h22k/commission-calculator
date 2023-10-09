@@ -4,36 +4,20 @@ namespace H22k\CommissionCalculator\Reader\Strategies;
 
 use H22k\CommissionCalculator\Exception\Reader\BadExtensionException;
 use H22k\CommissionCalculator\Exception\Reader\BadTransactionException;
-use H22k\CommissionCalculator\Exception\Reader\FileNotFoundException;
 use H22k\CommissionCalculator\Reader\Contracts\ReadStrategy;
+use H22k\CommissionCalculator\Reader\File;
 use H22k\CommissionCalculator\Transaction\Transaction;
 
-class TxtReadStrategy implements ReadStrategy
+readonly class TxtReadStrategy implements ReadStrategy
 {
     /**
-     * @var resource
+     * @throws BadExtensionException
      */
-    private $file;
-
-    /**
-     * @throws BadExtensionException|FileNotFoundException
-     */
-    public function __construct(string $fileName)
+    public function __construct(private File $file)
     {
-        if (!str_ends_with($fileName, '.txt')) {
-            throw new BadExtensionException(sprintf('%s is not a .txt file!', $fileName));
+        if (!str_ends_with($this->file->getFileName(), '.txt')) {
+            throw new BadExtensionException(sprintf('%s is not a .txt file!', $this->file->getFileName()));
         }
-
-        if (!file_exists(ROOT_PATH . $fileName)) {
-            throw new FileNotFoundException($fileName);
-        }
-
-        $this->file = fopen(ROOT_PATH . $fileName, 'r');
-    }
-
-    public function __destruct()
-    {
-        fclose($this->file);
     }
 
     /**
@@ -43,7 +27,8 @@ class TxtReadStrategy implements ReadStrategy
     public function read(): array
     {
         $transactions = [];
-        while ($buffer = fgets($this->file)) {
+
+        foreach ($this->file->readByLine() as $buffer) {
             $transactions[] = $this->createTransactionBy($buffer);
         }
 
@@ -65,7 +50,7 @@ class TxtReadStrategy implements ReadStrategy
 
         return new Transaction(
             bin: $transactionAsJson->bin,
-            amount: $transactionAsJson->amount,
+            amount: (float)$transactionAsJson->amount,
             currency: $transactionAsJson->currency
         );
     }
@@ -73,7 +58,7 @@ class TxtReadStrategy implements ReadStrategy
     private function isTransactionAcceptable(object $transactionAsJson): bool
     {
         return $transactionAsJson
-            && ($transactionAsJson->amount && is_float((float)$transactionAsJson->amount))
+            && ($transactionAsJson->amount && is_numeric($transactionAsJson->amount))
             && ($transactionAsJson->currency && is_string($transactionAsJson->currency))
             && ($transactionAsJson->bin && is_string($transactionAsJson->bin));
     }

@@ -2,7 +2,7 @@
 
 namespace H22k\CommissionCalculator;
 
-final readonly class RequestOption
+readonly class RequestOption implements RequestOptionInterface
 {
     public function __construct(
         private string $method,

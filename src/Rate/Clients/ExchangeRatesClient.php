@@ -5,8 +5,8 @@ namespace H22k\CommissionCalculator\Rate\Clients;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use H22k\CommissionCalculator\Rate\BaseRateClient;
-use H22k\CommissionCalculator\RequestOption;
-use H22k\CommissionCalculator\Transaction\Transaction;
+use H22k\CommissionCalculator\RequestOptionInterface;
+use H22k\CommissionCalculator\Transaction\Contracts\TransactionInterface;
 use Psr\Http\Message\ResponseInterface;
 
 class ExchangeRatesClient extends BaseRateClient
@@ -14,7 +14,7 @@ class ExchangeRatesClient extends BaseRateClient
 
     public function __construct(
         Client $client,
-        RequestOption $requestOption,
+        RequestOptionInterface $requestOption,
         string $baseCurrency,
         private readonly string $apiAccessKey
     ) {
@@ -24,7 +24,7 @@ class ExchangeRatesClient extends BaseRateClient
     /**
      * @throws GuzzleException
      */
-    protected function sendRequest(Transaction $transaction): ResponseInterface
+    protected function sendRequest(TransactionInterface $transaction): ResponseInterface
     {
         return $this->client->request(
             method: $this->requestOption->getMethod(),

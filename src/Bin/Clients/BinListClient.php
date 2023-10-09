@@ -4,7 +4,7 @@ namespace H22k\CommissionCalculator\Bin\Clients;
 
 use GuzzleHttp\Exception\GuzzleException;
 use H22k\CommissionCalculator\Bin\BaseBinClient;
-use H22k\CommissionCalculator\Transaction\Transaction;
+use H22k\CommissionCalculator\Transaction\Contracts\TransactionInterface;
 use Psr\Http\Message\ResponseInterface;
 
 class BinListClient extends BaseBinClient
@@ -20,7 +20,7 @@ class BinListClient extends BaseBinClient
     /**
      * @throws GuzzleException
      */
-    protected function sendRequest(Transaction $transaction): ResponseInterface
+    protected function sendRequest(TransactionInterface $transaction): ResponseInterface
     {
         return $this->client->request(
             method: $this->requestOption->getMethod(),

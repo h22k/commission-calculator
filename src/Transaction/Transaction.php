@@ -2,7 +2,9 @@
 
 namespace H22k\CommissionCalculator\Transaction;
 
-final readonly class Transaction
+use H22k\CommissionCalculator\Transaction\Contracts\TransactionInterface;
+
+readonly class Transaction implements TransactionInterface
 {
     public function __construct(
         private string $bin,

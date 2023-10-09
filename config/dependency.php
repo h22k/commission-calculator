@@ -1,12 +1,15 @@
 <?php
 
+use GuzzleHttp\Client;
+use GuzzleHttp\ClientInterface;
 use H22k\CommissionCalculator\App;
+use H22k\CommissionCalculator\Bin\BaseBinClient;
 use H22k\CommissionCalculator\Bin\Clients\BinListClient;
-use H22k\CommissionCalculator\Bin\Contracts\BinClient;
 use H22k\CommissionCalculator\CommissionCalculator;
+use H22k\CommissionCalculator\Rate\BaseRateClient;
 use H22k\CommissionCalculator\Rate\Clients\ExchangeRatesClient;
-use H22k\CommissionCalculator\Rate\Contracts\RateClient;
 use H22k\CommissionCalculator\Reader\Contracts\ReadStrategy;
+use H22k\CommissionCalculator\Reader\File;
 use H22k\CommissionCalculator\Reader\Reader;
 use H22k\CommissionCalculator\Reader\Strategies\TxtReadStrategy;
 use Psr\Container\ContainerInterface;
@@ -33,11 +36,11 @@ $rateClientCallback = function (ContainerInterface $container) {
 return [
     App::class => \DI\autowire(),
     ReadStrategy::class => $readStrategyCallback,
-    BinClient::class => $binClientCallback,
-    RateClient::class => $rateClientCallback,
+    BaseBinClient::class => $binClientCallback,
+    BaseRateClient::class => $rateClientCallback,
     Reader::class => \DI\autowire(),
-    TxtReadStrategy::class => \DI\autowire()
-        ->constructorParameter('fileName', \DI\get('reader.txt.file')),
+    TxtReadStrategy::class => \DI\autowire(),
+    File::class => \DI\create()->constructor(\DI\get('reader.file')),
 
     ExchangeRatesClient::class => \DI\autowire()
         ->constructorParameter('requestOption', \DI\get('rate.exchange_rate.options'))
@@ -47,5 +50,9 @@ return [
     BinListClient::class => \DI\autowire()->constructorParameter('requestOption', \DI\get('bin.binlist.options')),
     CommissionCalculator::class => \DI\autowire()
         ->constructorParameter('europeanCommissionRate', \DI\get('app.european.commission.rate.float'))
-        ->constructorParameter('notEuropeanCommissionRate', \DI\get('app.not.european.commission.rate.float'))
+        ->constructorParameter('notEuropeanCommissionRate', \DI\get('app.not.european.commission.rate.float')),
+
+    Client::class => \DI\create(),
+
+    ClientInterface::class => \DI\get(Client::class),
 ];

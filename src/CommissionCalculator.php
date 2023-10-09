@@ -2,29 +2,37 @@
 
 namespace H22k\CommissionCalculator;
 
-use H22k\CommissionCalculator\Bin\Contracts\BinClient;
-use H22k\CommissionCalculator\Rate\Contracts\RateClient;
-use H22k\CommissionCalculator\Transaction\Transaction;
+use Exception;
+use H22k\CommissionCalculator\Bin\BaseBinClient;
+use H22k\CommissionCalculator\Exception\Bin\BinHTTPException;
+use H22k\CommissionCalculator\Rate\BaseRateClient;
+use H22k\CommissionCalculator\Transaction\Contracts\TransactionInterface;
 
 final readonly class CommissionCalculator
 {
     public function __construct(
-        private BinClient $binClient,
-        private RateClient $rateClient,
+        private BaseBinClient $binClient,
+        private BaseRateClient $rateClient,
         private float $europeanCommissionRate,
         private float $notEuropeanCommissionRate
     ) {
     }
 
-    public function calculate(Transaction $transaction): float
+    /**
+     * @throws Exception
+     */
+    public function calculate(TransactionInterface $transaction): float
     {
         $baseValue = $this->rateClient->getBaseValue($transaction);
-        $commission = $this->getCommission($transaction);
+        $commissionRate = $this->getCommissionRate($transaction);
 
-        return round($baseValue * $commission, 2);
+        return round($baseValue * $commissionRate, 2);
     }
 
-    private function getCommission(Transaction $transaction): float
+    /**
+     * @throws BinHTTPException
+     */
+    private function getCommissionRate(TransactionInterface $transaction): float
     {
         $isEuropean = $this->binClient->isEuropean($transaction);
 

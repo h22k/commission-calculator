@@ -3,7 +3,7 @@
 require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__.'/dotenv.php';
 
-$configs = glob(ROOT_PATH . 'config/*.php');
+$configs = glob(ROOT_PATH . '/config/*.php');
 
 $definitions = [];
 
